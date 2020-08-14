@@ -60,7 +60,7 @@ Visit the URL `/tags` (it should appear in the nav panel). This is an auto-gener
 
 On each build (even with `--livereload`), all the `.md` files composing the site are scanned, their "triple-dash-delimted" yaml header is extracted and parsed, and the list of tags is collected. 
 
-After that, a new temporal file is created (by default in `aux/tags.md`, but this is customizable) which contains the generated tags page, in markdown format. This file is not in the documents folder to avoid retriggering a build, but it is added to the list of files to be converted to HTML by mkdocs.
+After that, a new temporal file is created (by default in `generated/tags.md`, but this is customizable) which contains the generated tags page, in markdown format. This file is not in the documents folder to avoid retriggering a build, but it is added to the list of files to be converted to HTML by mkdocs.
 
 # Customization
 
@@ -88,7 +88,7 @@ You can also provide your own markdown template, in case that you want a differe
 
 The full customizable options for the plugin are:
 
-* `tags_folder`: Folder in which the auxiliar tags markdown file will be written (`aux` by default, relative to the folder in which `mkdocs` is invoked). It can be set to an absolute path, such as `/tmp/mysite/aux`. The required folders are created.
+* `tags_folder`: Folder in which the auxiliar tags markdown file will be written (`generated` by default, relative to the folder in which `mkdocs` is invoked). It can be set to an absolute path, such as `/tmp/mysite/generated`. The required folders are created.
 * `tags_template`: path to the file which contains the markdown-jinja template for the tags page. It is `None` by default, which means that the package-provided template is used. It can be an absolute path, or relative to the folder in which `mkdocs` is run.
 
 For example, this can be put at `mkdocs.yaml`:
@@ -97,7 +97,7 @@ For example, this can be put at `mkdocs.yaml`:
 plugins:
     - search
     - tags:
-        tags_folder: /tmp/mysite/aux
+        tags_folder: /tmp/mysite/generated
         tags_template: docs/theme/tags.md.template
 ```
 

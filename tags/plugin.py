@@ -25,15 +25,19 @@ class TagsPlugin(BasePlugin):
 
     config_scheme = (
         ('tags_filename', Type(str, default='tags.md')),
-        ('tags_folder', Type(str, default='aux')),
+        ('tags_folder', Type(str, default='generated')),
         ('tags_template', Type(str)),
+        ('tags_target_folder', Type(str)),
+        ('tags_add_target', Type(bool, default=True)),
     )
 
     def __init__(self):
         self.metadata = []
         self.tags_filename = "tags.md"
-        self.tags_folder = "aux"
+        self.tags_folder = "generated"
         self.tags_template = None
+        self.tags_target_folder = None
+        self.tags_add_target = False
 
     def on_nav(self, nav, config, files):
         # nav.items.insert(1, nav.items.pop(-1))
@@ -43,6 +47,8 @@ class TagsPlugin(BasePlugin):
         # Re assign the options
         self.tags_filename = Path(self.config.get("tags_filename") or self.tags_filename)
         self.tags_folder = Path(self.config.get("tags_folder") or self.tags_folder)
+        self.tags_target_folder = Path(self.config.get("tags_target_folder") or self.tags_target_folder)
+        self.tags_add_target = self.config.get("tags_add_target")
         # Make sure that the tags folder is absolute, and exists
         if not self.tags_folder.is_absolute():
             self.tags_folder = Path(config["docs_dir"]) / ".." / self.tags_folder
@@ -63,13 +69,14 @@ class TagsPlugin(BasePlugin):
         self.generate_tags_file()
 
         # New file to add to the build
-        newfile = File(
-            path=str(self.tags_filename),
-            src_dir=str(self.tags_folder),
-            dest_dir=config["site_dir"],
-            use_directory_urls=False
-        )
-        files.append(newfile)
+        if self.tags_add_target:
+            newfile = File(
+                path=str(self.tags_filename),
+                src_dir=str(self.tags_folder),
+                dest_dir=config["site_dir"] / Path(self.tags_target_folder),
+                use_directory_urls=False
+            )
+            files.append(newfile)
 
     def generate_tags_page(self, data):
         if self.tags_template is None:
