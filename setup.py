@@ -26,7 +26,7 @@ setup(
     license='MIT',
     python_requires='>=3.6',
     install_requires=[
-        'mkdocs>=1.1',
+        'mkdocs>=1.0.4', # was 1.1
         'jinja2',
     ],
     classifiers=[
