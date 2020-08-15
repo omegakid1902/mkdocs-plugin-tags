@@ -115,7 +115,7 @@ class TagsPlugin(BasePlugin):
         return output_text
 
     def update_tags_in_extra(self, config):
-        sorted_meta = sorted(self.metadata)
+        sorted_meta = sorted(self.metadata, key=lambda e: e.get("year", 5000) if e else 0)
         extra = config.get('extra')
         extra['page_tags'] = {}
 
