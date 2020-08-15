@@ -50,8 +50,8 @@ class TagsPlugin(BasePlugin):
         self.tags_target_folder = Path(self.config.get("tags_target_folder") or self.tags_target_folder)
         self.tags_add_target = self.config.get("tags_add_target")
         # Make sure that the tags folder is absolute, and exists
-        if not self.tags_folder.is_absolute():
-            self.tags_folder = Path(config["site_dir"]) / self.tags_folder
+        #if not self.tags_folder.is_absolute():
+        #    self.tags_folder = Path(config["site_dir"]) / self.tags_folder
         if not self.tags_folder.exists():
             self.tags_folder.mkdir(parents=True)
 
