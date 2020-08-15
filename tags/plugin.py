@@ -27,7 +27,7 @@ class TagsPlugin(BasePlugin):
         ('tags_filename', Type(str, default='tags.md')),
         ('tags_folder', Type(str, default='generated')),
         ('tags_template', Type(str)),
-        ('tags_target_folder', Type(str)),
+        ('tags_target_folder', Type(str, default='.')),
         ('tags_add_target', Type(bool, default=True)),
     )
 
@@ -51,7 +51,7 @@ class TagsPlugin(BasePlugin):
         self.tags_add_target = self.config.get("tags_add_target")
         # Make sure that the tags folder is absolute, and exists
         if not self.tags_folder.is_absolute():
-            self.tags_folder = Path(config["docs_dir"]) / ".." / self.tags_folder
+            self.tags_folder = Path(config["site_dir"]) / self.tags_folder
         if not self.tags_folder.exists():
             self.tags_folder.mkdir(parents=True)
 
