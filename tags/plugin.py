@@ -186,5 +186,5 @@ def get_metadata(name, path):
             meta = yaml.load(metadata, Loader=yaml.FullLoader)
             meta.update(filename=name)
             if 'title' not in meta:
-                md['title'] = 'Untitled' if title is None else title
+                meta['title'] = 'Untitled' if title is None else title
             return meta
