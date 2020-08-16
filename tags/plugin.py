@@ -42,10 +42,7 @@ class TagsPlugin(BasePlugin):
         self.tags_target_folder = None
         self.tags_add_target = True
         self.tags_create_target = True
-
-    def on_nav(self, nav, config, files):
-        # nav.items.insert(1, nav.items.pop(-1))
-        pass
+        self.tags_dict = {}
 
     def vprint(self, str):
         if self.verbose:
@@ -81,7 +78,7 @@ class TagsPlugin(BasePlugin):
                 continue
             self.metadata.append(get_metadata(f.src_path, config["docs_dir"]))
 
-        self.update_tags_in_extra(config)
+        self.update_tags_dict(config)
 
         # Create new file with tags
         if self.tags_create_target:
@@ -96,6 +93,10 @@ class TagsPlugin(BasePlugin):
                     use_directory_urls=False
                 )
                 files.append(newfile)
+
+    def on_page_markdown(self, markdown, page, config, files):
+        page.meta['all_tags'] = self.tags_dict
+
 
     def generate_tags_page(self, data):
         if self.tags_template is None:
@@ -114,31 +115,25 @@ class TagsPlugin(BasePlugin):
         )
         return output_text
 
-    def update_tags_in_extra(self, config):
-        sorted_meta = sorted(self.metadata, key=lambda e: e.get("year", 5000) if e else 0)
-        extra = config.get('extra')
-        extra['page_tags'] = {}
+    def update_tags_dict(self, config):
+        #sorted_meta = sorted(self.metadata, key=lambda e: e.get("year", 5000) if e else 0)
 
         num_pages = 0
         pages_with_tags = 0
-        tag_dict = defaultdict(list)
-        for e in sorted_meta:
+        self.tags_dict = defaultdict(list)
+        for e in self.metadata:
             if not e: continue
 
             num_pages += 1
             tags = e.get("tags", [])
-            if tags is not None:
+            if tags is not None and len(tags) > 0:
                 pages_with_tags += 1
                 for tag in tags:
-                    tag_dict[tag].append(e)
+                    self.tags_dict[tag].append(e)
         
-        self.nprint('Tags: Total pages scanned: {0}, pages with tags: {1}, total tags: {2}'.format(num_pages, pages_with_tags, len(tag_dict)))
-        if self.verbose and len(tag_dict) > 0:
-            self.vprint('Tags: {0}'.format(tag_dict))
-
-        extra['page_tags'] = sorted(tag_dict)
-            
-
+        self.nprint('Tags: Total pages scanned: {0}, pages with tags: {1}, total tags: {2}'.format(num_pages, pages_with_tags, len(self.tags_dict)))
+        if self.verbose and len(self.tags_dict) > 0:
+            self.vprint('Tags: {0}'.format(self.tags_dict))
 
     def generate_tags_file(self):
         sorted_meta = sorted(self.metadata, key=lambda e: e.get("year", 5000) if e else 0)
@@ -165,17 +160,19 @@ def get_metadata(name, path):
     def extract_yaml(f):
         result = []
         c = 0
+        title = None        
         for line in f:
-            if line.strip() == "---":
+            sline = line.strip()
+            if sline == "---":
                 c +=1
                 continue
             if c==2:
-                break
+                if sline:
+                    if sline.startswith('# '):
+                        title = sline.lstrip('# ')
+                    break
             if c==1:
                 result.append(line)
-
-        # TODO find H1 !!!
-        title = None        
 
         return "".join(result), title
 
@@ -186,5 +183,8 @@ def get_metadata(name, path):
             meta = yaml.load(metadata, Loader=yaml.FullLoader)
             meta.update(filename=name)
             if 'title' not in meta:
+                if not title: 
+                    title = name.replace('-', ' ').replace('_', ' ')
+                    if title.lower() == title: title = title.capitalize()
                 meta['title'] = 'Untitled' if title is None else title
             return meta
