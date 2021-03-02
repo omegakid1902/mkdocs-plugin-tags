@@ -76,6 +76,7 @@ class TagsPlugin(BasePlugin):
         for f in files:
             if not f.src_path.endswith(".md"):
                 continue
+            self.vprint('reading tags from %s' % f.src_path)
             self.metadata.append(get_metadata(f.src_path, config["docs_dir"]))
 
         self.update_tags_dict(config)
