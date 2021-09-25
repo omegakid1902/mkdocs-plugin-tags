@@ -153,7 +153,7 @@ class TagsPlugin(BasePlugin):
 
         t = self.generate_tags_page(tag_dict)
 
-        with open(str(self.tags_folder / self.tags_filename), "w") as f:
+        with open(str(self.tags_folder / self.tags_filename), "w", encoding='utf-8') as f:
             f.write(t)
 
 # Helper functions
@@ -163,12 +163,16 @@ def get_metadata(name, path):
     def extract_yaml(f):
         result = []
         c = 0
-        title = None        
+        title = None
+        line_id = 0
         for line in f:
             sline = line.strip()
+            # Strictly for front matter at line 0
+            if line_id == 0 and sline != "---":
+                break
+
             if sline == "---":
                 c +=1
-                continue
             if c==2:
                 if sline:
                     if sline.startswith('# '):
@@ -177,10 +181,12 @@ def get_metadata(name, path):
             if c==1:
                 result.append(line)
 
+            line_id += 1
+
         return "".join(result), title
 
     filename = Path(path) / Path(name)
-    with filename.open() as f:
+    with filename.open(encoding='utf-8') as f:
         metadata, title = extract_yaml(f)
         if metadata:
             meta = yaml.load(metadata, Loader=yaml.FullLoader)
