@@ -9,10 +9,12 @@ Extracts this metadata and creates a "Tags" page which lists all tags and all pa
 Install this plugin (it will also install mkdocs if required)
 
 ```shell
-$ pip install git+https://github.com/jldiaz/mkdocs-plugin-tags.git
+$ pip install git+https://github.com/omegakid1902/mkdocs-plugin-tags.git
 ```
 
-> **Note**. Since this package is in alpha stage, it is not yet available from pypi, so the only way to install it is via git.
+> **Note**. Since this package is in alpha stage, it is not yet available from pypi, so the only way to install it is via git. 
+> This is not maintain -> `$ pip install git+https://github.com/jldiaz/mkdocs-plugin-tags.git`
+
 
 Create a new documentation folder:
 
